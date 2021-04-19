@@ -13,22 +13,31 @@ namespace TCP_Client
             {
                 Int32 port = 13000;
                 TcpClient client = new TcpClient(server, port);
-
-                Byte[] data = Encoding.ASCII.GetBytes(message);
+                Byte[] bytes = new Byte[256];
 
                 NetworkStream stream = client.GetStream();
 
-                stream.Write(data, 0, data.Length);
-
-                Console.WriteLine("Sent: {0}", message);
-
-                data = new Byte[256];
-
-                String responseData = String.Empty;
-
-                Int32 bytes = stream.Read(data, 0, data.Length);
-                responseData = Encoding.ASCII.GetString(data, 0, bytes);
-                Console.WriteLine("Received: {0}", responseData);
+                int i;
+                stream.Write(Encoding.ASCII.GetBytes(message));
+                while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+                {
+                    Console.Clear();
+                    string responseData = Encoding.ASCII.GetString(bytes, 0, i);
+                    Console.WriteLine(responseData);
+                    if (responseData == "Vyhrál jste!" || responseData == "Prohrál jste!")
+                    {
+                        Console.WriteLine(responseData);
+                        Console.WriteLine("\nStiskni Enter pro pokračování...");
+                        Console.Read();
+                    }
+                    else
+                    {
+                        Console.Write("Zvolte znak: ");
+                        string choice = Console.ReadLine();
+                        Byte[] choiceBytes = Encoding.ASCII.GetBytes(choice);
+                        stream.Write(choiceBytes);
+                    }
+                }
 
                 stream.Close();
                 client.Close();
@@ -42,7 +51,7 @@ namespace TCP_Client
                 Console.WriteLine("SocketException: {0}", e);
             }
 
-            Console.WriteLine("\nPress Enter to continue...");
+            Console.WriteLine("\nStiskni Enter pro pokračování...");
             Console.Read();
         }
     }
