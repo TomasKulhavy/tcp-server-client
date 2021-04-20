@@ -43,7 +43,6 @@ namespace TCP_Server
 
                     char[] choosenWord = words[index].ToCharArray();
                     char[] guess = string.Concat(Enumerable.Repeat("*", choosenWord.Length)).ToCharArray();
-
                     data = null;
 
                     NetworkStream stream = client.GetStream();
@@ -78,22 +77,23 @@ namespace TCP_Server
                         }
                         if (counter >= 6)
                         {
-                            msg = Encoding.ASCII.GetBytes("Prohrál jste! Hádané slovo bylo: " + choosenWord + hangman[counter]);
+                            string s = new string(choosenWord);
+                            Console.WriteLine("\nHádané slovo bylo: " + s);
+                            msg = Encoding.ASCII.GetBytes("Prohral jste! Hadane slovo bylo: " + s + hangman[counter]);
                             client.Close();
                             Console.WriteLine("\nStiskni Enter pro pokračování...");
                             Console.Read();
                         }
                         if (win)
                         {
-                            msg = Encoding.ASCII.GetBytes("Vyhrál jste! Hádané slovo bylo: " + choosenWord);
-                            client.Close();
-                            Console.WriteLine("\nStiskni Enter pro pokračování...");
-                            Console.Read();
+                            string s = new string(choosenWord);
+                            Console.WriteLine("\nHádané slovo bylo: " + s);
+                            msg = Encoding.ASCII.GetBytes("Vyhral jste! Hadane slovo bylo: " + s + hangman[counter]);
                         }
                         else
                         {
-                            Console.WriteLine(guess);
-                            msg = Encoding.ASCII.GetBytes(guess + hangman[counter]);
+                            string s = new string(guess);
+                            msg = Encoding.ASCII.GetBytes(s + hangman[counter]);
                         }
                         
                         stream.Write(msg, 0, msg.Length);
@@ -109,9 +109,6 @@ namespace TCP_Server
             {
                 server.Stop();
             }
-
-            Console.WriteLine("\nStiskni Enter pro pokračování...");
-            Console.Read();
         }
     }
 }
